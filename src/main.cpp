@@ -6,7 +6,6 @@
 #include "robodash/views/image.hpp"
 #include "devices.h"
 #include "autons.h"
-
 using pros::delay;
 using std::string;
 using fmt::to_string;
@@ -63,17 +62,13 @@ void initialize() {
     selector.focus();
 }
 
-void autonomous(){
-    pros::Task controllerHUDTask(controllerHUD);
-    selector.focus();
-    selector.run_auton();
-}
-
 void competition_initialize(){
 
 }
 
+//This Runs After Both The Driver Control and Autonomous Period
 void disable(){
+//Setting pistons to false in here closes them after a match ends ;)
 hang1.set_value(false);
 hang2.set_value(false);
 backWings.set_value(false);
@@ -81,20 +76,26 @@ wingsL.set_value(false);
 wingsR.set_value(false);
 }
 
+//Run your auton selector here
+void autonomous(){
+    //Runs the controller display as a task
+    pros::Task controllerHUDTask(controllerHUD);
+    //Shifts to the selector screen
+    selector.focus();
+    //Calls the auton selector
+    selector.run_auton();
+}
 
-
-
-
+//This Runs During The Driving Portion of a Match
 void opcontrol(){
     //Runs the controller temp display as a task
     pros::Task controllerHUDTask(controllerHUD);
     while (true) {
-           //Run driver control functions below this line
+        //Run driver control functions below this line
             intakeControl();
             pneumaticsControl();
             hang();
 
-        
          // get left y and right y positions from the joysticks
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         int rightY = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);

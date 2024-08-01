@@ -1,18 +1,26 @@
-#include "autons.h"
+#include "autons.h" //This references the header file associated with this .cpp file
 #include "lemlib/asset.hpp"
-pros::MotorGroup left_motor_group({-1, -3, -4}, pros::MotorGears::blue);
-// right motor group
-pros::MotorGroup right_motor_group({5, 6, 7}, pros::MotorGears::blue);
-
 using pros::delay;
 using rd::Console;
+//DT MotorGroups Go Here
+pros::MotorGroup left_motor_group({-1, -3, -4}, pros::MotorGears::blue);
+pros::MotorGroup right_motor_group({5, 6, 7}, pros::MotorGears::blue);
+
+//Define the Robodash Console Here
 Console console;
+
 //Define Jerry.IO Paths here! 
 //(and make a note of what auton they are used in)
 ASSET(straight_txt); //for Fun auton
 ASSET(curves_txt);//for Fun auton
 
-// drivetrain settings
+ //Variables for the trackOdom(); function
+float xValue = 0;
+float yValue = 0;
+float thetaValue = 0;
+
+//Lemlib Time!
+// Drivetrain Settings -> Input info about DT to get more accurate 
 lemlib::Drivetrain drivetrain(&left_motor_group, // left motor group
                               &right_motor_group, // right motor group
                               12.5, // 12.5 inch track width
@@ -21,13 +29,9 @@ lemlib::Drivetrain drivetrain(&left_motor_group, // left motor group
                               2 // horizontal drift is 2 (for now)
 );
 
-    //odom values for the tracker function
-    float xValue = 0;
-    float yValue = 0;
-    float thetaValue = 0;
-
 // imu
 pros::Imu imu(13);
+//Defining Odom Pods
 // horizontal tracking wheel encoder
 // pros::Rotation horizontal_encoder(20);
 // vertical tracking wheel encoder
@@ -37,15 +41,15 @@ pros::Imu imu(13);
 // vertical tracking wheel
 // lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_275, -2.5);
 
-// odometry settings
-lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to null
-                            nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
-                            nullptr, // horizontal tracking wheel 1
+//Setting Up Odometry
+lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullptr as we are using IMEs
+                            nullptr, //Extraneous extra vertical tracking wheel
+                            nullptr, // horizontal tracking wheel 1,  set to nullptr as we are using IMEs
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
                             &imu // inertial sensor
 );
 
-// lateral PID controller
+//Lateral PID Settings (Forward/Back Motion Controller)
 lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
                                               0, // integral gain (kI)
                                               25, // derivative gain (kD)
@@ -57,7 +61,7 @@ lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
                                               90 // maximum acceleration (slew)
 );
 
-// angular PID controller
+// Angular PID Settings (Turning Motion Controller)
 lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
                                               0, // integral gain (kI)
                                               15, // derivative gain (kD)
@@ -77,7 +81,7 @@ lemlib::Chassis chassis(drivetrain, // drivetrain settings
 );
 
 
-//odometry tracking displayed on screen
+//This uses Robodash to display where the robot thinks it currently is
 void trackOdom(){
     while (true) {
         xValue = chassis.getPose().x;
@@ -91,8 +95,9 @@ void trackOdom(){
     }
 }
 
-//autons
+//Write Your Autons Below :)
 void lateralPIDTune(){
+    //Shifts to a blank screen where position is being displayed
     console.focus();
     pros::Task odomTask(trackOdom);
     // set position to x:0, y:0, heading:0
@@ -104,6 +109,7 @@ void lateralPIDTune(){
 }
 
 void turningPIDTune(){
+    //Shifts to a blank screen where position is being displayed
     console.focus();
     pros::Task odomTask(trackOdom);
      // set position to x:0, y:0, heading:0
@@ -113,6 +119,7 @@ void turningPIDTune(){
 }
 
 void fun(){
+    //Shifts to a blank screen where position is being displayed
     console.focus();
     pros::Task odomTask(trackOdom);
 //      // set position to x:0, y:0, heading:0
@@ -141,7 +148,9 @@ chassis.follow(curves_txt, 15, 500000, true, false);
 }
 
 
-//ACTUAL SELECTOR
+//Auton Selector -> You store your autons here as a vector so the auton selector can access them
+//It follows this format ; 
+//rd::Selector name ({"auton name", auton name}, {"auton name", auton name}});
 rd::Selector selector({{"lateralPIDTune", &lateralPIDTune},
 {"turningPIDTune", &turningPIDTune},
 {"fun", fun}

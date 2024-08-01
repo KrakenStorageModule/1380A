@@ -1,18 +1,20 @@
 #include "main.h"
 #include "devices.h"
 
+//Initialize Controller here
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
-//intake
+
+//Initialize Motors/MotorGroups Here
 pros::MotorGroup intake({8,-9}, pros::v5::MotorGears::blue);
 
-//pistons
+//Initialize Pneumatics Here
 pros::adi::DigitalOut backWings('A');
 pros::adi::DigitalOut wingsL('F');
 pros::adi::DigitalOut wingsR('C');
 pros::adi::DigitalOut hang1('E');
 pros::adi::DigitalOut hang2('H');
 
- //temperature stuff
+ //Variables for ControllerHUD(); -> Move these out of devices at some point lol
     bool rumbleOnce = false;
         bool rumbleTwice = false;
         int rumbleCooldown = 30000; // cooldown period in milliseconds (e.g., 60 seconds)
@@ -25,11 +27,12 @@ pros::adi::DigitalOut hang2('H');
         std::string tempReturn = " ";
         std::string warnTag = " ";
 
-//bools
+//Booleans for Driver Control Toggles
     bool backToggle = false;
     bool rightToggle = false;
     bool leftToggle = false;
 
+//Driver Control Functions Go Here -> Call them in the opControl(); while loop
 void intakeControl(){
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
             intake.move_voltage(12000);
@@ -40,7 +43,6 @@ void intakeControl(){
         }
     
     }
-
 
 void hang(){
     if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
