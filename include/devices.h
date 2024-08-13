@@ -1,3 +1,4 @@
+//Declare everything here before you define it in devices.cpp 
 #ifndef DEVICES_H
 #define DEVICES_H
 
@@ -9,15 +10,17 @@
 //controller
 extern pros::Controller controller;
 
-//pistons n shii
-extern pros::adi::DigitalOut backWings;
-extern pros::adi::DigitalOut wingsL;
-extern pros::adi::DigitalOut wingsR;
-extern pros::adi::DigitalOut hang1;
-extern pros::adi::DigitalOut hang2;
+//High Stakes Pistons
+extern pros::adi::DigitalOut hang1; //hang pistons
+extern pros::adi::DigitalOut hang2; //hang pistons
+extern pros::adi::DigitalOut utilArm; //corner/mogo arm
+extern pros::adi::Pneumatics pto;
+extern pros::adi::DigitalOut mogo1; // mogo clamp
+extern pros::adi::DigitalOut mogo2; // mogo clamp
 
 //Motors
-extern pros::MotorGroup intake;
+extern pros::Motor intake;
+extern pros::Motor basket;
 
 //temperature stuff
   extern bool rumbleOnce;
@@ -28,18 +31,30 @@ extern pros::MotorGroup intake;
   extern  int currentTime;
   extern  double avgTempLeft;
   extern  double avgTempRight;
-  extern   int avgTempTotal;
+  extern int avgTempTotal;
   extern    std::string tempReturn;
   extern    std::string warnTag;
 
-//bools for toggles
-  extern bool backToggle;
-  extern bool rightToggle;
-  extern bool leftToggle ;
+  //Toggles
+  extern bool hangToggle;
+  extern bool ptoToggle;
+  extern bool mogoToggle;
+  extern bool utilToggle;
+
+//a check for hang
+extern int tier;
 
 //driver control functions 
 void intakeControl();
  void hang();
 void pneumaticsControl();
+
+//sensors
+
+//hang sensors
+extern pros::adi::DigitalIn hook;
+extern pros::adi::DigitalIn hook2;
+extern pros::Rotation dr4bTrack;
+
 
 #endif //DEVICES_H

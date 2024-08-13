@@ -1,25 +1,33 @@
+//This file is for everything to do with the autonomous period
+//It contains all your autons, auton functions (used for pneumatics mostly to flip the toggles)
+//As well as LemLib settings and Robodash features
+
 #include "autons.h" //This references the header file associated with this .cpp file
 #include "lemlib/asset.hpp"
+#include "devices.h"
+#include "robodash/views/selector.hpp"
 using pros::delay;
 using rd::Console;
-//DT MotorGroups Go Here
-pros::MotorGroup left_motor_group({-1, -3, -4}, pros::MotorGears::blue);
-pros::MotorGroup right_motor_group({5, 6, 7}, pros::MotorGears::blue);
 
 //Define the Robodash Console Here
 Console console;
-
-//Define Jerry.IO Paths here! 
-//(and make a note of what auton they are used in)
-ASSET(straight_txt); //for Fun auton
-ASSET(curves_txt);//for Fun auton
 
  //Variables for the trackOdom(); function
 float xValue = 0;
 float yValue = 0;
 float thetaValue = 0;
 
+//DEFINE JERRY.IO PATHS HERE
+//(and make a note of what auton they are used in pls)
+ASSET(straight_txt); //for Fun auton
+ASSET(curves_txt);//for Fun auton
+
 //Lemlib Time!
+
+//DT MotorGroups Go Here
+pros::MotorGroup left_motor_group({-1, -3, -4}, pros::MotorGears::blue);
+pros::MotorGroup right_motor_group({5, 6, 7}, pros::MotorGears::blue);
+
 // Drivetrain Settings -> Input info about DT to get more accurate 
 lemlib::Drivetrain drivetrain(&left_motor_group, // left motor group
                               &right_motor_group, // right motor group
@@ -79,6 +87,10 @@ lemlib::Chassis chassis(drivetrain, // drivetrain settings
                         angular_controller, // angular PID settings
                         sensors // odometry sensors
 );
+
+//Auton Functions (Functions to be used IN auton routes)
+//I use these because it makes sure the piston state and toggle state stay in sync
+//this is just easier than flipping the toggle bool and THEN changing the piston state 
 
 
 //This uses Robodash to display where the robot thinks it currently is
@@ -142,8 +154,8 @@ void fun(){
 //     chassis.moveToPoint(0, -38, 1000, {.forwards = false, .earlyExitRange =0}, false);
 //     chassis.follow(straight_txt, 10, 5000, true, true);
 //     chassis.moveToPoint(0 ,0,3000, {.earlyExitRange = 0}, true);
-chassis.setPose(0,0,0);
-chassis.follow(curves_txt, 15, 500000, true, false);
+    chassis.setPose(0,0,0);
+    chassis.follow(curves_txt, 15, 500000, true, false);
 //chassis.swingToHeading(180, lemlib::DriveSide::RIGHT, 1000, {.earlyExitRange = 0}, true);
 }
 

@@ -1,4 +1,4 @@
-#pragma once
+//Declare everything here before you define it in autons.cpp =
 #ifndef AUTONS_H
 #define AUTONS_H
 #include "main.h"
