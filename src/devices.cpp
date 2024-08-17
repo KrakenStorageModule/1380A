@@ -15,7 +15,7 @@ using pros::Motor;
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 //Initialize Motors/MotorGroups Here
-Motor intake(21, pros::v5::MotorGears::green);
+Motor intake(21, pros::v5::MotorGears::blue);
 Motor basket(20, pros::v5::MotorGears::green);
 
 //Initialize Pneumatics Here
