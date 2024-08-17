@@ -1,7 +1,7 @@
 # 1380A
 1380A Vex High Stakes (24-25)  Code
 
-Made By Johan Kornet, Using Robodash and LemLib
+Made By Johan Kornet, Utilizing Robodash and LemLib in PROS on VSCode
 
 Quick Rundown:
 
