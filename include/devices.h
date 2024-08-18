@@ -7,9 +7,6 @@
 #include "lemlib/api.hpp"
 #include "robodash/api.h"
 
-//controller
-extern pros::Controller controller;
-
 //High Stakes Pistons
 extern pros::adi::DigitalOut hang1; //hang pistons
 extern pros::adi::DigitalOut hang2; //hang pistons
@@ -23,6 +20,7 @@ extern pros::Motor intake;
 extern pros::Motor basket;
 
 //temperature stuff
+void controllerHUD();
   extern bool rumbleOnce;
   extern  bool rumbleTwice;
   extern    int rumbleCooldown;
@@ -48,6 +46,9 @@ extern int tier;
 void intakeControl();
  void hang();
 void pneumaticsControl();
+
+//controller
+extern pros::Controller controller;
 
 //sensors
 

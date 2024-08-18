@@ -7,6 +7,17 @@
 #include "lemlib/api.hpp"
 #include "robodash/api.h"
 
+//autons
+void lateralPIDTune();
+void turningPIDTune();
+void trackOdom();
+void fun();
+
+//values for tracking position
+extern float xValue;
+extern float yValue;
+extern float thetaValue;
+
 //drivetrain motorgroups
 extern pros::MotorGroup left_motor_group;
 extern pros::MotorGroup right_motor_group;
@@ -19,14 +30,4 @@ extern lemlib::Chassis chassis;
 //selector
 extern rd::Selector selector;
 
-//autons
-void lateralPIDTune();
-void turningPIDTune();
-void trackOdom();
-void fun();
-
-//values for tracking position
-extern float xValue;
-extern float yValue;
-extern float thetaValue;
 #endif // AUTONS_H

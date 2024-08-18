@@ -5,6 +5,7 @@
 #include "autons.h" //This references the header file associated with this .cpp file
 #include "lemlib/asset.hpp"
 #include "devices.h"
+#include "globals.h"
 #include "robodash/views/selector.hpp"
 using pros::delay;
 using rd::Console;
