@@ -57,10 +57,10 @@ void opcontrol(){
 
          // get left y and right y positions from the joysticks
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        int rightY = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+        int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
         // This is the control scheme ->  rn it's tank
-        chassis.tank(leftY, rightY);
+        chassis.curvature(leftY, rightX);
 
         // delay to save resources
         pros::delay(25);
