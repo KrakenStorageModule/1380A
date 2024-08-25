@@ -9,9 +9,8 @@
 
 //High Stakes Pistons
 extern pros::adi::DigitalOut hang1; //hang pistons
-extern pros::adi::DigitalOut hang2; //hang pistons
-extern pros::adi::DigitalOut utilArm; //corner/mogo arm
-extern pros::adi::Pneumatics pto;
+//extern pros::adi::DigitalOut hang2; //hang pistons
+//extern pros::adi::DigitalOut utilArm; //corner/mogo arm
 extern pros::adi::DigitalOut mogo1; // mogo clamp
 extern pros::adi::DigitalOut mogo2; // mogo clamp
 
@@ -30,32 +29,39 @@ void controllerHUD();
   extern  double avgTempLeft;
   extern  double avgTempRight;
   extern int avgTempTotal;
-  extern    std::string tempReturn;
-  extern    std::string warnTag;
+  extern std::string tempReturn;
+  extern std::string warnTag;
 
   //Toggles
-  extern bool hangToggle;
-  extern bool ptoToggle;
   extern bool mogoToggle;
-  extern bool utilToggle;
-
-//a check for hang
-extern int tier;
+  extern bool hangToggle;
+  // extern bool utilToggle;
 
 //driver control functions 
 void intakeControl();
- void hang();
 void pneumaticsControl();
-
+void armPID();
 //controller
 extern pros::Controller controller;
 
 //sensors
 
 //hang sensors
-extern pros::adi::DigitalIn hook;
-extern pros::adi::DigitalIn hook2;
-extern pros::Rotation dr4bTrack;
+extern pros::Rotation armTrack;
 
+//pid variables
+    extern float error;
+    extern float prevError;
+    extern float P;
+    extern float I;
+    extern float D;
+    extern float F;
+   extern  float kP;
+   extern float kI;
+   extern float kD;
+   extern float kF;
+   extern float integral;
+   extern float deriv;
+   extern float deadband;
 
 #endif //DEVICES_H

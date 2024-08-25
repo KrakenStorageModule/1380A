@@ -13,6 +13,7 @@
 #include "globals.h"
 #include "pros/rtos.hpp"
 #include <string>
+#include "cmath"
 using pros::Motor;
 using pros::delay;
 using std::to_string;
@@ -26,11 +27,8 @@ Motor basket(20, pros::v5::MotorGears::green);
 
 //Initialize Pneumatics Here
  pros::adi::DigitalOut hang1('A'); //hang pistons
- pros::adi::DigitalOut hang2('B'); //hang pistons
- pros::adi::DigitalOut utilArm('C'); //corner/mogo arm
- pros::adi::DigitalOut arm1('D'); //basket pistons
- pros::adi::DigitalOut arm2('E'); //basket pistons
-pros::adi::Pneumatics pto('F', true);
+ //pros::adi::DigitalOut hang2('B'); //hang pistons
+ //pros::adi::DigitalOut utilArm('C'); //corner/mogo arm
   pros::adi::DigitalOut mogo1('J'); // mogo clamp
  pros::adi::DigitalOut mogo2('K'); // mogo clamp
 //Special Note -> This is a Pneumatics object
@@ -51,16 +49,22 @@ pros::adi::Pneumatics pto('F', true);
     std::string warnTag = " ";
 
 //Booleans for Driver Control Toggles
-   bool hangToggle;
-   bool ptoToggle;
-   bool mogoToggle;
-   bool utilToggle;
-   int tier = 0;
+   bool mogoToggle = false;
+   bool hangToggle = false;
+  // bool utilToggle = false;
 //sensors 
- pros::adi::DigitalIn hook('G');
- pros::adi::DigitalIn hook2('H');
- pros::Rotation dr4bTrack(10);
+ pros::Rotation armTrack(10);
 
+//PID Variables
+    float error = 0.0;
+    float prevError = 0.0;
+    float P = 0.0;
+    float I = 0.0;
+    float D = 0.0;
+    float F = 0.0;
+    float integral = 0.0;
+    float deriv = 0.0;
+    float deadband = 1;
 
 void controllerHUD(){
         while (true) {
@@ -118,6 +122,27 @@ void controllerHUD(){
         delay(110);
     }
 }
+//TUNE THESE
+    float kP = 0.0; // "Gas Pedal"
+    float kI = 0.0; //Ignore this unless desperate
+    float kD = 0.0; //This should be much larger than kP
+    float kF = 0.0; //Feedforward (counteracts gravity)
+//arm pid loop for macros and whatnot
+void armPID(float target){
+    error = target - armTrack.get_angle();
+    //deadband
+    while(deadband >fabs(error) ){
+    //calculations
+        P = error*kP;
+        integral += error;
+        I = integral*kI;
+        deriv = error-prevError;
+        D = deriv*kD;
+        F = target*kF;
+        prevError = error;
+    }
+    basket.move(P+I+D+F);
+}
 
 //Driver Control Functions Go Here -> Call them in the opControl(); while loop
 void intakeControl(){
@@ -130,43 +155,43 @@ void intakeControl(){
         }
     }
 
-//hang code
-void hang(){
-        if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1) && controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
-            pto.retract();
-            left_motor_group.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-            right_motor_group.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-
-            //gonna try to get the logic down here. gonna be painful as hell sadly
-            while(tier <= 3){
-                if ((hook.get_value() != 1) &&(hook2.get_value() != 1) ) {
-                    
-                }
-                hang1.set_value(true);
-                hang2.set_value(true);
-
-
-
-                tier++;
-
-            }
+//Driver Control
+void basketControl(){
+        //Manual Control
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+            basket.move_voltage(12000);
+        }else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+            basket.move_voltage(-12000);
+        }else{
+            basket.move_voltage(0);
         }
-
-
-    }
+        //Macro
+        if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
+            armPID(0);
+        } else if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
+            armPID(-30);
+        } else if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)){
+            armPID(-130);
+        }
+}
     
 //Driver Control Pneumatics Code
 void pneumaticsControl(){
         //utility arm 
-            if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)){
-                utilToggle = ! utilToggle;
-                utilArm.set_value(utilToggle);
-            }
+            // if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)){
+            //     utilToggle = ! utilToggle;
+            //     utilArm.set_value(utilToggle);
+            // }
         //mogo clamp
-            if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)){
+            if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)){
                 mogoToggle = ! mogoToggle;
                 mogo1.set_value(mogoToggle);
                 mogo2.set_value(mogoToggle);
             }
-        
+    //hang
+            if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)){
+                hangToggle = ! hangToggle;
+                hang1.set_value(hangToggle);
+               // hang2.set_value(hangToggle);
+            }
     }
