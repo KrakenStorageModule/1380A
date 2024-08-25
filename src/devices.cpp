@@ -127,21 +127,31 @@ void controllerHUD(){
     float kI = 0.0; //Ignore this unless desperate
     float kD = 0.0; //This should be much larger than kP
     float kF = 0.0; //Feedforward (counteracts gravity)
+    float range = 10000; //Limit for integral anti-windup
 //arm pid loop for macros and whatnot
 void armPID(float target){
     error = target - armTrack.get_angle();
     //deadband
     while(deadband >fabs(error) ){
+        //Calculates the differences between the target and current
+        error = target - armTrack.get_angle();
     //calculations
         P = error*kP;
         integral += error;
-        I = integral*kI;
+        I = integral*kI;    
         deriv = error-prevError;
         D = deriv*kD;
         F = target*kF;
         prevError = error;
+    //Integral Anti-WindUp
+        if(fabs(integral) > range){
+            integral = 0;
+            integral += error;
+        }
+        //Actual Movement
+         basket.move(P+I+D+F);
+
     }
-    basket.move(P+I+D+F);
 }
 
 //Driver Control Functions Go Here -> Call them in the opControl(); while loop

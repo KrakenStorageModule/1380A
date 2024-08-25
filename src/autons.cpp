@@ -94,6 +94,13 @@ lemlib::Chassis chassis(drivetrain, // drivetrain settings
 //this is just easier than flipping the toggle bool and THEN changing the piston state 
 
 
+//auton control functions
+void autoMogo(){
+    mogoToggle = ! mogoToggle;
+    mogo1.set_value(mogoToggle);
+    mogo2.set_value(mogoToggle);
+}
+
 //This uses Robodash to display where the robot thinks it currently is
 void trackOdom(){
     while (true) {
@@ -131,33 +138,13 @@ void turningPIDTune(){
     chassis.turnToHeading(90, 100000);
 }
 
-void fun(){
+void mogoTest(){
     //Shifts to a blank screen where position is being displayed
     console.focus();
     pros::Task odomTask(trackOdom);
-//      // set position to x:0, y:0, heading:0
-//     chassis.setPose(0, 0, 0);
-//     chassis.moveToPoint(0, 15, 1000, { .earlyExitRange = 0}, true);
-//     chassis.turnToHeading(90, 1000, { .earlyExitRange = 0}, true);
-//     chassis.moveToPoint(10, 30, 1000, {.minSpeed = 127, .earlyExitRange = 2}, true);
-//     chassis.turnToHeading(270, 1000, {.earlyExitRange = 0}, true);
-//     chassis.moveToPoint(0, 0, 1000, {.minSpeed = 127, .earlyExitRange = 2}, true);
-//     chassis.swingToHeading(0, lemlib::DriveSide::LEFT, 1000, {.earlyExitRange = 0}, false);
-//    // chassis.waitUntilDone();
-//     chassis.setPose(0,0,0);
-//     chassis.moveToPoint(0, 36,  1000, { .earlyExitRange = 0}, true);
-//     chassis.moveToPoint(0, 0,  1000, {.forwards = false, .earlyExitRange = 0}, false);
-//     chassis.setPose(0,0,0);
-//     chassis.moveToPoint(-25, 40, 1000, { .earlyExitRange = 0}, true);
-//     chassis.turnToHeading(0, 1000, {.earlyExitRange = 0}, false);
-//     //chassis.waitUntilDone();
-//     chassis.setPose(0,0,0);
-//     chassis.moveToPoint(0, -38, 1000, {.forwards = false, .earlyExitRange =0}, false);
-//     chassis.follow(straight_txt, 10, 5000, true, true);
-//     chassis.moveToPoint(0 ,0,3000, {.earlyExitRange = 0}, true);
-    chassis.setPose(0,0,0);
-    chassis.follow(curves_txt, 15, 500000, true, false);
-//chassis.swingToHeading(180, lemlib::DriveSide::RIGHT, 1000, {.earlyExitRange = 0}, true);
+    chassis.moveToPoint(0, 24, 1000, {.earlyExitRange = 3}, false);
+    chassis.turnToHeading(180, 1000, {.earlyExitRange = 10}, false);
+    autoMogo();
 }
 
 
