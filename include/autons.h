@@ -29,5 +29,5 @@ extern lemlib::Chassis chassis;
 
 //selector
 extern rd::Selector selector;
-
+extern int allianceColor;
 #endif // AUTONS_H

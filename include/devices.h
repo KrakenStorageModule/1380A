@@ -6,13 +6,14 @@
 #include "pros/imu.hpp"
 #include "lemlib/api.hpp"
 #include "robodash/api.h"
-
+#include "pros/optical.hpp"
 //High Stakes Pistons
 extern pros::adi::DigitalOut hang1; //hang pistons
 //extern pros::adi::DigitalOut hang2; //hang pistons
-//extern pros::adi::DigitalOut utilArm; //corner/mogo arm
+extern pros::adi::DigitalOut utilArm; //corner/mogo arm
 extern pros::adi::DigitalOut mogo1; // mogo clamp
 extern pros::adi::DigitalOut mogo2; // mogo clamp
+extern pros::adi::DigitalOut colorSort; // mogo clamp
 
 //Motors
 extern pros::Motor intake;
@@ -35,19 +36,23 @@ void controllerHUD();
   //Toggles
   extern bool mogoToggle;
   extern bool hangToggle;
-  // extern bool utilToggle;
+  extern bool utilToggle;
 
 //driver control functions 
 void intakeControl();
 void pneumaticsControl();
 void armPID();
+void segregation();
+void basketControl();
 //controller
 extern pros::Controller controller;
 
 //sensors
 
-//hang sensors
 extern pros::Rotation armTrack;
+extern pros::Rotation odomH;
+extern pros::Rotation odomV;
+extern pros::Optical vision;
 
 //pid variables
     extern float error;

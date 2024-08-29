@@ -100,6 +100,10 @@ void autoMogo(){
     mogo1.set_value(mogoToggle);
     mogo2.set_value(mogoToggle);
 }
+//This tracks what color auton is running
+//1 is red, 2 is blue
+int allianceColor = 0;
+
 
 //This uses Robodash to display where the robot thinks it currently is
 void trackOdom(){
@@ -147,11 +151,17 @@ void mogoTest(){
     autoMogo();
 }
 
-
+void red(){
+    allianceColor = 1;
+}
+void blue(){
+    allianceColor = 2;
+}
 //Auton Selector -> You store your autons here as a vector so the auton selector can access them
 //It follows this format ; 
 //rd::Selector name ({"auton name", auton name}, {"auton name", auton name}});
 rd::Selector selector({{"lateralPIDTune", &lateralPIDTune},
-{"turningPIDTune", &turningPIDTune},
-{"fun", fun}
+{"turningPIDTune", &turningPIDTune}, 
+{"red", red}, 
+{"blue", blue}
 });

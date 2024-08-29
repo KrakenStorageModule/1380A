@@ -31,7 +31,7 @@ void disable(){
 //Setting pistons to false in here closes them after a match ends ;)
 mogo1.set_value(false);
 mogo2.set_value(false);
-//utilArm.set_value(false);
+utilArm.set_value(false);
 
 }
 
@@ -53,7 +53,8 @@ void opcontrol(){
         //Run driver control functions below this line
             intakeControl();
             pneumaticsControl();
-            
+            basketControl();
+            segregation();
 
          // get left y and right y positions from the joysticks
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);

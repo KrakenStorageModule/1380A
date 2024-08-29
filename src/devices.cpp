@@ -11,6 +11,7 @@
 #include "pros/motor_group.hpp"
 #include "pros/motors.h"
 #include "globals.h"
+#include "pros/optical.hpp"
 #include "pros/rtos.hpp"
 #include <string>
 #include "cmath"
@@ -28,11 +29,11 @@ Motor basket(20, pros::v5::MotorGears::green);
 //Initialize Pneumatics Here
  pros::adi::DigitalOut hang1('A'); //hang pistons
  //pros::adi::DigitalOut hang2('B'); //hang pistons
- //pros::adi::DigitalOut utilArm('C'); //corner/mogo arm
-  pros::adi::DigitalOut mogo1('J'); // mogo clamp
+ pros::adi::DigitalOut utilArm('C'); //corner/mogo arm
+pros::adi::DigitalOut mogo1('J'); // mogo clamp
  pros::adi::DigitalOut mogo2('K'); // mogo clamp
-//Special Note -> This is a Pneumatics object
-//I typically use digitalOut cuz it's easier, but the pto has to start extended.
+ pros::adi::DigitalOut colorSort('B'); // mogo clamp
+
 
 
  //Variables for ControllerHUD(); -> no touchies
@@ -51,10 +52,11 @@ Motor basket(20, pros::v5::MotorGears::green);
 //Booleans for Driver Control Toggles
    bool mogoToggle = false;
    bool hangToggle = false;
+   bool utilToggle = false;
   // bool utilToggle = false;
 //sensors 
  pros::Rotation armTrack(10);
-
+pros::Optical vision (2);
 //PID Variables
     float error = 0.0;
     float prevError = 0.0;
@@ -133,9 +135,14 @@ void armPID(float target){
     error = target - armTrack.get_angle();
     //deadband
     while(deadband >fabs(error) ){
+        //kills the loop if the driver tries to move it manually
+        //essentially an override
+        if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1) || controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+            break;
+        }
         //Calculates the differences between the target and current
         error = target - armTrack.get_angle();
-    //calculations
+        //calculations
         P = error*kP;
         integral += error;
         I = integral*kI;    
@@ -150,8 +157,8 @@ void armPID(float target){
         }
         //Actual Movement
          basket.move(P+I+D+F);
-
     }
+
 }
 
 //Driver Control Functions Go Here -> Call them in the opControl(); while loop
@@ -187,11 +194,11 @@ void basketControl(){
     
 //Driver Control Pneumatics Code
 void pneumaticsControl(){
-        //utility arm 
-            // if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)){
-            //     utilToggle = ! utilToggle;
-            //     utilArm.set_value(utilToggle);
-            // }
+       // utility arm 
+            if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)){
+                utilToggle = ! utilToggle;
+                utilArm.set_value(utilToggle);
+            }
         //mogo clamp
             if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)){
                 mogoToggle = ! mogoToggle;
@@ -204,4 +211,37 @@ void pneumaticsControl(){
                 hang1.set_value(hangToggle);
                // hang2.set_value(hangToggle);
             }
+    }
+
+    //Color Sorting Code
+    void segregation(){
+        if (!controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+            if(allianceColor == 1){
+                    //closes colorsort mech when it returns to baseline ora red ring
+                    //very much needs tuning
+                    if(((50 >= vision.get_hue()) || (60 <= vision.get_hue())) || ((90 >= vision.get_hue()) || (70 <= vision.get_hue()))){
+                        colorSort.set_value(false);
+                    
+                        //tune this range 
+                    }else  if((350 >= vision.get_hue()) || (10 <= vision.get_hue())){
+                        //kicks out the wrong color ring
+                                colorSort.set_value(true);
+                    }
+            }
+                    
+                     if(allianceColor == 2){
+                            //closes colorsort mech when it returns to baseline or a blue ring
+                            //needs so much tuning
+                        if(((250 >= vision.get_hue()) || (150 <= vision.get_hue())) || (90 >= vision.get_hue()) || (70 <= vision.get_hue())){
+                            //tune this bih
+                     }else if((350 >= vision.get_hue()) || (10 <= vision.get_hue())){
+                        //kicks out the wrong color ring
+                                colorSort.set_value(true);
+                     }
+                        
+                    
+        }else{
+            colorSort.set_value(false);
+        }
+    }
     }
