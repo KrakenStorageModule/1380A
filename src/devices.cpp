@@ -215,26 +215,24 @@ void pneumaticsControl(){
 
     //Color Sorting Code
     void segregation(){
+        //RED
         if (!controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
             if(allianceColor == 1){
                     //closes colorsort mech when it returns to baseline ora red ring
-                    //very much needs tuning
-                    if(((50 >= vision.get_hue()) || (60 <= vision.get_hue())) || ((90 >= vision.get_hue()) || (70 <= vision.get_hue()))){
+                    if(((350 >= vision.get_hue()) && (10 <= vision.get_hue())) ||((90 >= vision.get_hue()) && (70 <= vision.get_hue()))){
                         colorSort.set_value(false);
                     
                         //tune this range 
-                    }else  if((350 >= vision.get_hue()) || (10 <= vision.get_hue())){
+                    }else  if((220 >= vision.get_hue()) && (200 <= vision.get_hue())){
                         //kicks out the wrong color ring
                                 colorSort.set_value(true);
                     }
             }
-                    
+                     //BLUE
                      if(allianceColor == 2){
-                            //closes colorsort mech when it returns to baseline or a blue ring
-                            //needs so much tuning
-                        if(((250 >= vision.get_hue()) || (150 <= vision.get_hue())) || (90 >= vision.get_hue()) || (70 <= vision.get_hue())){
+                        if((220 >= vision.get_hue()) && (200 <= vision.get_hue()) || ((90 >= vision.get_hue()) && (70 <= vision.get_hue()))){
                             //tune this bih
-                     }else if((350 >= vision.get_hue()) || (10 <= vision.get_hue())){
+                     }else if((350 >= vision.get_hue()) && (10 <= vision.get_hue())){
                         //kicks out the wrong color ring
                                 colorSort.set_value(true);
                      }

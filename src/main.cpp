@@ -7,6 +7,7 @@
 #include "devices.h"
 #include "autons.h"
 #include "globals.h"
+#include "pros/vision.h"
 using pros::delay;
 using std::string;
 
@@ -20,6 +21,7 @@ void initialize() {
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
     basket.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     selector.focus();
+    vision.set_led_pwm(100);
 }
 
 void competition_initialize(){
