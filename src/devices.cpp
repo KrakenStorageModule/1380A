@@ -132,12 +132,13 @@ void controllerHUD(){
     float range = 10000; //Limit for integral anti-windup
 //arm pid loop for macros and whatnot
 void armPID(float target){
-    error = target - armTrack.get_angle();
     //deadband
     while(deadband >fabs(error) ){
+     error = target - armTrack.get_angle();
         //kills the loop if the driver tries to move it manually
         //essentially an override
-        if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1) || controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+        if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1) 
+         || controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
             break;
         }
         //Calculates the differences between the target and current
@@ -213,13 +214,15 @@ void pneumaticsControl(){
             }
     }
 
-    //Color Sorting Code
+
+   //Color Sorting Code
     void segregation(){
         //RED
         if (!controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
             if(allianceColor == 1){
                     //closes colorsort mech when it returns to baseline ora red ring
-                    if(((350 >= vision.get_hue()) && (10 <= vision.get_hue())) ||((90 >= vision.get_hue()) && (70 <= vision.get_hue()))){
+                    if(((350 >= vision.get_hue()) && (10 <= vision.get_hue())) 
+                     ||((90 >= vision.get_hue()) && (70 <= vision.get_hue()))){
                         colorSort.set_value(false);
                     
                         //tune this range 
@@ -230,7 +233,8 @@ void pneumaticsControl(){
             }
                      //BLUE
                      if(allianceColor == 2){
-                        if((220 >= vision.get_hue()) && (200 <= vision.get_hue()) || ((90 >= vision.get_hue()) && (70 <= vision.get_hue()))){
+                        if((220 >= vision.get_hue()) && (200 <= vision.get_hue()) 
+                         || ((90 >= vision.get_hue()) && (70 <= vision.get_hue()))){
                             //tune this bih
                      }else if((350 >= vision.get_hue()) && (10 <= vision.get_hue())){
                         //kicks out the wrong color ring
