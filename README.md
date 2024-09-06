@@ -9,6 +9,6 @@ main.cpp -> main file, contains the competition template.
 
 autons.cpp -> Contains LemLib settings, alongside Robodash callbacks and autons/the auton selector
 
-devices.cpp -> contains pistons, motors, driver control functions, etc
+devices.cpp -> contains pistons, motors, driver control functions, PID function and colorsort algo + filter
 static -> contains Jerry.io pathing
 Good Luck! 
