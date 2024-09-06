@@ -32,7 +32,7 @@ pros::MotorGroup right_motor_group({5, 6, 7}, pros::MotorGears::blue);
 // Drivetrain Settings -> Input info about DT to get more accurate 
 lemlib::Drivetrain drivetrain(&left_motor_group, // left motor group
                               &right_motor_group, // right motor group
-                              12.5, // 12.5 inch track width
+                              13, // 12.5 inch track width
                               lemlib::Omniwheel::NEW_325, // using new 3.35" omnis
                               450, // drivetrain rpm is 450
                               2 // horizontal drift is 2 (for now)
@@ -41,20 +41,21 @@ lemlib::Drivetrain drivetrain(&left_motor_group, // left motor group
 // imu
 pros::Imu imu(13);
 //Defining Odom Pods
+//MAY NEED TO REVERSE TRACKERS USING (port, true);
 // horizontal tracking wheel encoder
-// pros::Rotation horizontal_encoder(20);
+pros::Rotation horizontal_encoder(20);
 // vertical tracking wheel encoder
-// pros::adi::Encoder vertical_encoder('C', 'D', true);
+ pros::Rotation vertical_encoder(19);
 // horizontal tracking wheel
-// lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_275, -5.75);
+ lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_275, -3);
 // vertical tracking wheel
-// lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_275, -2.5);
+ lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_275, 1);
 
 //Setting Up Odometry
-lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to nullptr as we are using IMEs
+lemlib::OdomSensors sensors(&vertical_tracking_wheel, // vertical tracking wheel 1
                             nullptr, //Extraneous extra vertical tracking wheel
-                            nullptr, // horizontal tracking wheel 1,  set to nullptr as we are using IMEs
-                            nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
+                            &horizontal_tracking_wheel, // horizontal tracking wheel 1
+                            nullptr, //Extraneous extra horizontal tracking wheel
                             &imu // inertial sensor
 );
 
@@ -156,6 +157,10 @@ void red(){
 }
 void blue(){
     allianceColor = 2;
+}
+void odomTest(){
+   console.focus();
+   pros::Task odomTask(trackOdom);
 }
 //Auton Selector -> You store your autons here as a vector so the auton selector can access them
 //It follows this format ; 
