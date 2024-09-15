@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "BilalsBalls",
+    "project_name": "BilalsBBalls",
     "target": "v5",
     "templates": {
       "LemLib": {
