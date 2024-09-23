@@ -22,17 +22,19 @@ using std::to_string;
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 //Initialize Motors/MotorGroups Here
-Motor intake(21, pros::v5::MotorGears::blue);
-Motor basket(20, pros::v5::MotorGears::green);
+Motor intakeHook(21, pros::v5::MotorGears::blue);
+Motor intakeFront(22, pros::v5::MotorGears::blue);
+//Motor basket(20, pros::v5::MotorGears::green);
 
 
 //Initialize Pneumatics Here
  pros::adi::DigitalOut hang1('A'); //hang pistons
  //pros::adi::DigitalOut hang2('B'); //hang pistons
  pros::adi::DigitalOut utilArm('C'); //corner/mogo arm
-pros::adi::DigitalOut mogo1('J'); // mogo clamp
+ pros::adi::DigitalOut mogo1('J'); // mogo clamp
  pros::adi::DigitalOut mogo2('K'); // mogo clamp
  pros::adi::DigitalOut colorSort('B'); // mogo clamp
+ pros::adi::DigitalOut intakeLift('F'); // mogo clamp
 
 
 
@@ -53,9 +55,9 @@ pros::adi::DigitalOut mogo1('J'); // mogo clamp
    bool mogoToggle = false;
    bool hangToggle = false;
    bool utilToggle = false;
-  // bool utilToggle = false;
+   bool intakeToggle = false;
 //sensors 
- pros::Rotation armTrack(10);
+ //pros::Rotation armTrack(10);
 pros::Optical vision (2);
 //PID Variables
     float error = 0.0;
@@ -131,67 +133,71 @@ void controllerHUD(){
     float kF = 0.0; //Feedforward (counteracts gravity)
     float range = 10000; //Limit for integral anti-windup
 //arm pid loop for macros and whatnot
-void armPID(float target){
-    //deadband
-    while(deadband >fabs(error) ){
-     error = target - armTrack.get_angle();
-        //kills the loop if the driver tries to move it manually
-        //essentially an override
-        if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1) 
-         || controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-            break;
-        }
-        //Calculates the differences between the target and current
-        error = target - armTrack.get_angle();
-        //calculations
-        P = error*kP;
-        integral += error;
-        I = integral*kI;    
-        deriv = error-prevError;
-        D = deriv*kD;
-        F = target*kF;
-        prevError = error;
-    //Integral Anti-WindUp
-        if(fabs(integral) > range){
-            integral = 0;
-            integral += error;
-        }
-        //Actual Movement
-         basket.move(P+I+D+F);
-    }
 
-}
+// void armPID(float target){
+//     //deadband
+//     while(deadband >fabs(error) ){
+//      error = target - armTrack.get_angle();
+//         //kills the loop if the driver tries to move it manually
+//         //essentially an override
+//         if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1) 
+//          || controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+//             break;
+//         }
+//         //Calculates the differences between the target and current
+//         error = target - armTrack.get_angle();
+//         //calculations
+//         P = error*kP;
+//         integral += error;
+//         I = integral*kI;    
+//         deriv = error-prevError;
+//         D = deriv*kD;
+//         F = target*kF;
+//         prevError = error;
+//     //Integral Anti-WindUp
+//         if(fabs(integral) > range){
+//             integral = 0;
+//             integral += error;
+//         }
+//         //Actual Movement
+//          basket.move(P+I+D+F);
+//     }
+
+//}
 
 //Driver Control Functions Go Here -> Call them in the opControl(); while loop
 void intakeControl(){
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-            intake.move_voltage(12000);
+            intakeHook.move_voltage(12000);
+            intakeFront.move_voltage(12000);
         }else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-            intake.move_voltage(-12000);
+            intakeHook.move_voltage(-12000);
+            intakeFront.move_voltage(12000);
         }else{
-            intake.move_voltage(0);
+            intakeHook.move_voltage(0);
+            intakeFront.move_voltage(0);
         }
     }
 
 //Driver Control
-void basketControl(){
-        //Manual Control
-        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-            basket.move_voltage(12000);
-        }else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-            basket.move_voltage(-12000);
-        }else{
-            basket.move_voltage(0);
-        }
-        //Macro
-        if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
-            armPID(0);
-        } else if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
-            armPID(-30);
-        } else if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)){
-            armPID(-130);
-        }
-}
+// void basketControl(){
+//         //Manual Control
+//         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+//             basket.move_voltage(12000);
+//         }else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+//             basket.move_voltage(-12000);
+//         }else{
+//             basket.move_voltage(0);
+//         }
+//         //Macro
+//         if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
+//             armPID(0);
+//         } else if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
+//             armPID(-30);
+//         } else if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)){
+//             armPID(-130);
+//         }
+// }
     
 //Driver Control Pneumatics Code
 void pneumaticsControl(){
@@ -212,38 +218,44 @@ void pneumaticsControl(){
                 hang1.set_value(hangToggle);
                // hang2.set_value(hangToggle);
             }
+    //intake lift 
+            if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
+                intakeToggle = ! intakeToggle;
+                intakeLift.set_value(intakeToggle);
+               // hang2.set_value(hangToggle);
+            }
     }
 
 
    //Color Sorting Code
-    void segregation(){
-        //RED
-        if (!controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
-            if(allianceColor == 1){
-                    //closes colorsort mech when it returns to baseline ora red ring
-                    if(((350 >= vision.get_hue()) && (10 <= vision.get_hue())) 
-                     ||((90 >= vision.get_hue()) && (70 <= vision.get_hue()))){
-                        colorSort.set_value(false);
+    // void segregation(){
+    //     //RED
+    //     if (!controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+    //         if(allianceColor == 1){
+    //                 //closes colorsort mech when it returns to baseline ora red ring
+    //                 if(((350 >= vision.get_hue()) && (10 <= vision.get_hue())) 
+    //                  ||((90 >= vision.get_hue()) && (70 <= vision.get_hue()))){
+    //                     colorSort.set_value(false);
                     
-                        //tune this range 
-                    }else  if((220 >= vision.get_hue()) && (200 <= vision.get_hue())){
-                        //kicks out the wrong color ring
-                                colorSort.set_value(true);
-                    }
-            }
-                     //BLUE
-                     if(allianceColor == 2){
-                        if((220 >= vision.get_hue()) && (200 <= vision.get_hue()) 
-                         || ((90 >= vision.get_hue()) && (70 <= vision.get_hue()))){
-                            //tune this bih
-                     }else if((350 >= vision.get_hue()) && (10 <= vision.get_hue())){
-                        //kicks out the wrong color ring
-                                colorSort.set_value(true);
-                     }
+    //                     //tune this range 
+    //                 }else  if((220 >= vision.get_hue()) && (200 <= vision.get_hue())){
+    //                     //kicks out the wrong color ring
+    //                             colorSort.set_value(true);
+    //                 }
+    //         }
+    //                  //BLUE
+    //                  if(allianceColor == 2){
+    //                     if((220 >= vision.get_hue()) && (200 <= vision.get_hue()) 
+    //                      || ((90 >= vision.get_hue()) && (70 <= vision.get_hue()))){
+    //                         //tune this bih
+    //                  }else if((350 >= vision.get_hue()) && (10 <= vision.get_hue())){
+    //                     //kicks out the wrong color ring
+    //                             colorSort.set_value(true);
+    //                  }
                         
                     
-        }else{
-            colorSort.set_value(false);
-        }
-    }
-    }
+    //     }else{
+    //         colorSort.set_value(false);
+    //     }
+    // }
+    // }

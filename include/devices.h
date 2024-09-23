@@ -11,13 +11,13 @@
 extern pros::adi::DigitalOut hang1; //hang pistons
 //extern pros::adi::DigitalOut hang2; //hang pistons
 extern pros::adi::DigitalOut utilArm; //corner/mogo arm
-extern pros::adi::DigitalOut mogo1; // mogo clamp
-extern pros::adi::DigitalOut mogo2; // mogo clamp
-extern pros::adi::DigitalOut colorSort; // mogo clamp
+extern pros::adi::DigitalOut mogo1; // mogo clamp 1
+extern pros::adi::DigitalOut mogo2; // mogo clamp 2
+extern pros::adi::DigitalOut colorSort; // colorsort mech
+extern pros::adi::DigitalOut intakeLift; // intake lift
 
 //Motors
-extern pros::Motor intake;
-extern pros::Motor basket;
+//extern pros::Motor basket;
 
 //temperature stuff
 void controllerHUD();
@@ -37,19 +37,20 @@ void controllerHUD();
   extern bool mogoToggle;
   extern bool hangToggle;
   extern bool utilToggle;
+  extern bool intakeToggle;
 
 //driver control functions 
 void intakeControl();
 void pneumaticsControl();
-void armPID();
+// void armPID();
 void segregation();
-void basketControl();
+// void basketControl();
 //controller
 extern pros::Controller controller;
 
 //sensors
 
-extern pros::Rotation armTrack;
+// extern pros::Rotation armTrack;
 extern pros::Rotation odomH;
 extern pros::Rotation odomV;
 extern pros::Optical vision;
