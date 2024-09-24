@@ -18,7 +18,8 @@ extern pros::adi::DigitalOut intakeLift; // intake lift
 
 //Motors
 //extern pros::Motor basket;
-
+extern pros::Motor intakeHook;
+extern pros::Motor intakeFront;
 //temperature stuff
 void controllerHUD();
   extern bool rumbleOnce;

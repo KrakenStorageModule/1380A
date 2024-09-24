@@ -17,9 +17,11 @@ using std::string;
 // initialize function. Runs on program startup
 void initialize() {
     chassis.calibrate(); // calibrate sensors
-    intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    
+    intakeFront.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    intakeHook.set_brake_mode(MOTOR_BRAKE_COAST);
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
-    basket.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    //basket.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     selector.focus();
     vision.set_led_pwm(100);
 }
@@ -55,7 +57,7 @@ void opcontrol(){
         //Run driver control functions below this line
             intakeControl();
             pneumaticsControl();
-            basketControl();
+            //basketControl();
             segregation();
 
          // get left y and right y positions from the joysticks
