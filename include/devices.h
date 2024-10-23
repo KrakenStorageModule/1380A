@@ -20,7 +20,7 @@ extern pros::adi::DigitalOut intakeLift; // intake lift
 //extern pros::Motor basket;
 extern pros::Motor intakeHook;
 extern pros::Motor intakeFront;
-//temperature stuff
+//controller display stuff
 void controllerHUD();
   extern bool rumbleOnce;
   extern  bool rumbleTwice;
@@ -33,7 +33,7 @@ void controllerHUD();
   extern int avgTempTotal;
   extern std::string tempReturn;
   extern std::string warnTag;
-
+  extern std::string autonName;
   //Toggles
   extern bool mogoToggle;
   extern bool hangToggle;
@@ -43,8 +43,9 @@ void controllerHUD();
 //driver control functions 
 void intakeControl();
 void pneumaticsControl();
+void controllerAutonHUD();
 // void armPID();
-void segregation();
+// void segregation();
 // void basketControl();
 //controller
 extern pros::Controller controller;

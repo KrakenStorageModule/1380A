@@ -66,7 +66,7 @@ class Selector {
 
 	/// @}
 
-  private:
+  public:
 	rd_view_t *view;
 
 	lv_obj_t *select_cont;

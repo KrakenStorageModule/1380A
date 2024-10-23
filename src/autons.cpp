@@ -95,6 +95,8 @@ lemlib::Chassis chassis(drivetrain, // drivetrain settings
 //this is just easier than flipping the toggle bool and THEN changing the piston state 
 
 
+
+
 //auton control functions
 void autoMogo(){
     mogoToggle = ! mogoToggle;

@@ -41,8 +41,8 @@ utilArm.set_value(false);
 
 //Run your auton selector here
 void autonomous(){
-    //Runs the controller display as a task
-    pros::Task controllerHUDTask(controllerHUD);
+    //Shows name of selected auton
+      pros::Task autonHUDTask(controllerAutonHUD);
     //Shifts to the selector screen
     selector.focus();
     //Calls the auton selector
@@ -51,14 +51,14 @@ void autonomous(){
 
 //This Runs During The Driving Portion of a Match
 void opcontrol(){
-    //Runs the controller temp display as a task
+    //Displays dt temp on controller
     pros::Task controllerHUDTask(controllerHUD);
     while (true) {
         //Run driver control functions below this line
             intakeControl();
             pneumaticsControl();
             //basketControl();
-            segregation();
+            //segregation();
 
          // get left y and right y positions from the joysticks
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);

@@ -12,9 +12,11 @@
 #include "pros/motors.h"
 #include "globals.h"
 #include "pros/optical.hpp"
+#include "pros/rtos.h"
 #include "pros/rtos.hpp"
 #include <string>
 #include "cmath"
+#include "robodash/views/selector.hpp"
 using pros::Motor;
 using pros::delay;
 using std::to_string;
@@ -70,6 +72,19 @@ pros::Optical vision (2);
     float deriv = 0.0;
     float deadband = 1;
 
+
+//Auton Controller HUD => Displays Selected Auton
+void controllerAutonHUD(){
+    while (true) {
+    autonName = selector.selected_routine->name;
+    controller.set_text(0,0,autonName);
+    delay(110);
+    }
+}
+
+
+
+//Driver Control Controller HUD => Displays DT Temp
 void controllerHUD(){
         while (true) {
             currentTime = pros::millis();
@@ -90,6 +105,9 @@ void controllerHUD(){
             //Because the controller set_text function only accepts strings
             tempReturn =to_string(avgTempTotal);
             
+            //motor unplugged warning stuff
+
+           /*
             // Safe/Too hot display
             // rumble feature  also :) (Commented out cuz useless)
             if(avgTempTotal < 99){
@@ -116,9 +134,14 @@ void controllerHUD(){
                 //         rumbleTwiceTimer = currentTime;
                 //         rumbleOnce = false;
                 //  }
-            }
-        //Text Display
-        controller.set_text(0, 0, "DT: " + tempReturn + "F " /*+ warnTag*/);
+            } */
+      //Text Display
+        if(avgTempTotal < 200){
+        controller.set_text(0, 0, "DT: " + tempReturn + "F ");
+        }else {
+         controller.set_text(0, 0, "Motor(s) Unplugged");
+        }
+
 
         //Because this is run as a task, you need a delay to protect the Brain's CPU
         //Normally this is like 10-25 ms, but the controller screen updates every 110 ms
@@ -179,26 +202,6 @@ void intakeControl(){
         }
     }
 
-//Driver Control
-// void basketControl(){
-//         //Manual Control
-//         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-//             basket.move_voltage(12000);
-//         }else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-//             basket.move_voltage(-12000);
-//         }else{
-//             basket.move_voltage(0);
-//         }
-//         //Macro
-//         if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
-//             armPID(0);
-//         } else if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
-//             armPID(-30);
-//         } else if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)){
-//             armPID(-130);
-//         }
-// }
-    
 //Driver Control Pneumatics Code
 void pneumaticsControl(){
        // utility arm 
@@ -212,12 +215,12 @@ void pneumaticsControl(){
                 mogo1.set_value(mogoToggle);
                 mogo2.set_value(mogoToggle);
             }
-    //hang
-            if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)){
-                hangToggle = ! hangToggle;
-                hang1.set_value(hangToggle);
-               // hang2.set_value(hangToggle);
-            }
+    // //hang
+    //         if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)){
+    //             hangToggle = ! hangToggle;
+    //             hang1.set_value(hangToggle);
+    //            // hang2.set_value(hangToggle);
+    //         }
     //intake lift 
             if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
                 intakeToggle = ! intakeToggle;
