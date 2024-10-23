@@ -73,15 +73,27 @@ pros::Optical vision (2);
     float deadband = 1;
 
 
-//Auton Controller HUD => Displays Selected Auton
+//Auton Controller HUD => Displays/Cycles Selected Auton
+//this is controlled risky stuff => i exposed the selector class to get access to the current route
 void controllerAutonHUD(){
     while (true) {
-    autonName = selector.selected_routine->name;
-    controller.set_text(0,0,autonName);
-    delay(110);
-    }
+                // When the right button is pressed it cycles "right" through the autons on the controller
+                //yes it wraps around cuz of mod (when on last one, incrementing it )
+                if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+                    int newIndex = (selector.selected_routine - &selector.routines[0] + 1) % selector.routines.size();
+                    selector.selected_routine = &selector.routines[newIndex];
+                }
+                 // When the left button is pressed it cycles "left" through the autons on the controller
+                if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
+                    int newIndex = (selector.selected_routine - &selector.routines[0] - 1 + selector.routines.size()) % selector.routines.size();
+                    selector.selected_routine = &selector.routines[newIndex];
+                }
+        //gets the name (as a string) of the current auton and prints it to controller
+        autonName = selector.selected_routine->name;
+        controller.set_text(0,0,autonName);
+        delay(110);
 }
-
+}
 
 
 //Driver Control Controller HUD => Displays DT Temp
