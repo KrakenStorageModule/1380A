@@ -34,6 +34,7 @@ void controllerHUD();
   extern std::string tempReturn;
   extern std::string warnTag;
   extern std::string autonName;
+  extern int newIndex;
   //Toggles
   extern bool mogoToggle;
   extern bool hangToggle;
