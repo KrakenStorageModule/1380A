@@ -117,7 +117,6 @@ void controllerHUD(){
             //Because the controller set_text function only accepts strings
             tempReturn =to_string(avgTempTotal);
             
-            //motor unplugged warning stuff
 
            /*
             // Safe/Too hot display
@@ -151,6 +150,7 @@ void controllerHUD(){
         if(avgTempTotal < 200){
         controller.set_text(0, 0, "DT: " + tempReturn + "F ");
         }else {
+        
          controller.set_text(0, 0, "Motor(s) Unplugged");
         }
 

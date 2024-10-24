@@ -17,7 +17,6 @@ using std::string;
 // initialize function. Runs on program startup
 void initialize() {
     chassis.calibrate(); // calibrate sensors
-    
     intakeFront.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     intakeHook.set_brake_mode(MOTOR_BRAKE_COAST);
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
