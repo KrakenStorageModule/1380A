@@ -18,24 +18,18 @@ using std::string;
 void initialize() {
     chassis.calibrate(); // calibrate sensors
     intakeFront.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    intakeHook.set_brake_mode(MOTOR_BRAKE_COAST);
+    intakeHood.set_brake_mode(MOTOR_BRAKE_COAST);
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
-    //basket.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    //might not be needed here
     selector.focus();
-    vision.set_led_pwm(100);
 }
 
 void competition_initialize(){
-
 }
 
 //This Runs After Both The Driver Control and Autonomous Period
 void disable(){
 //Setting pistons to false in here closes them after a match ends ;)
-mogo1.set_value(false);
-mogo2.set_value(false);
-utilArm.set_value(false);
-
 }
 
 //Run your auton selector here
@@ -56,15 +50,12 @@ void opcontrol(){
         //Run driver control functions below this line
             intakeControl();
             pneumaticsControl();
-            //basketControl();
-            //segregation();
-
          // get left y and right y positions from the joysticks
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
         // This is the control scheme ->  rn it's tank
-        chassis.curvature(leftY, rightX);
+        chassis.arcade(leftY, rightX);
 
         // delay to save resources
         pros::delay(25);

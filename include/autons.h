@@ -7,6 +7,12 @@
 #include "lemlib/api.hpp"
 #include "robodash/api.h"
 
+//auton device funtions
+void autonMogo();
+void autonWall();
+void autonLift();
+void autonIntake();
+
 //autons
 void lateralPIDTune();
 void turningPIDTune();
@@ -29,5 +35,7 @@ extern lemlib::Chassis chassis;
 
 //selector
 extern rd::Selector selector;
-extern int allianceColor;
+
+//boolean for intake "state machine"
+extern bool intakeState;
 #endif // AUTONS_H

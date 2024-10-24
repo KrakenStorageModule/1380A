@@ -7,48 +7,36 @@
 #include "lemlib/api.hpp"
 #include "robodash/api.h"
 #include "pros/optical.hpp"
-//High Stakes Pistons
-extern pros::adi::DigitalOut hang1; //hang pistons
-//extern pros::adi::DigitalOut hang2; //hang pistons
-extern pros::adi::DigitalOut utilArm; //corner/mogo arm
+//Pistons
+extern pros::adi::DigitalOut utilArm; //doinker
 extern pros::adi::DigitalOut mogo1; // mogo clamp 1
 extern pros::adi::DigitalOut mogo2; // mogo clamp 2
-extern pros::adi::DigitalOut colorSort; // colorsort mech
-extern pros::adi::DigitalOut intakeLift; // intake lift
+extern pros::adi::DigitalOut wallArm1; //Wallstake 1
+extern pros::adi::DigitalOut wallArm2; // Wallstake 2
+extern pros::adi::DigitalOut intakeLift; // Wallstake 2
 
 //Motors
-//extern pros::Motor basket;
-extern pros::Motor intakeHook;
+extern pros::Motor intakeHood;
 extern pros::Motor intakeFront;
+
 //controller display stuff
 void controllerHUD();
-  extern bool rumbleOnce;
-  extern  bool rumbleTwice;
-  extern    int rumbleCooldown;
-  extern  int rumbleOnceTimer;
-  extern  int rumbleTwiceTimer;
-  extern  int currentTime;
   extern  double avgTempLeft;
   extern  double avgTempRight;
   extern int avgTempTotal;
   extern std::string tempReturn;
-  extern std::string warnTag;
   extern std::string autonName;
   extern int newIndex;
   //Toggles
   extern bool mogoToggle;
-  extern bool hangToggle;
+  extern bool wallToggle;
   extern bool utilToggle;
-  extern bool intakeToggle;
+  extern bool intakePistonToggle;
 
 //driver control functions 
 void intakeControl();
 void pneumaticsControl();
 void controllerAutonHUD();
-// void armPID();
-// void segregation();
-// void basketControl();
-//controller
 extern pros::Controller controller;
 
 //sensors
@@ -56,7 +44,7 @@ extern pros::Controller controller;
 // extern pros::Rotation armTrack;
 extern pros::Rotation odomH;
 extern pros::Rotation odomV;
-extern pros::Optical vision;
+
 
 //pid variables
     extern float error;

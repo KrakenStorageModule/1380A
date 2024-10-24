@@ -1,6 +1,12 @@
-//This file is for creating Devices (Motors, MotorGroups, Pneumatics, etc) \
+//This file is for creating Devices (Motors, MotorGroups, Pneumatics, etc) 
 //and functions using these devices to be called in OpControl
-
+/*HELLA IMPORTANT =>
+DRIVER CONTROLS =>
+R1/R2 = Intake 
+L2 = Doinker
+A = Intake Lift
+L1 = WallStake pistons
+*/
 #include "autons.h"
 #include "lemlib/chassis/chassis.hpp"
 #include "main.h"
@@ -24,43 +30,30 @@ using std::to_string;
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 //Initialize Motors/MotorGroups Here
-Motor intakeHook(21, pros::v5::MotorGears::blue);
+Motor intakeHood(21, pros::v5::MotorGears::blue);
 Motor intakeFront(22, pros::v5::MotorGears::blue);
 //Motor basket(20, pros::v5::MotorGears::green);
 
 
 //Initialize Pneumatics Here
- pros::adi::DigitalOut hang1('A'); //hang pistons
- //pros::adi::DigitalOut hang2('B'); //hang pistons
- pros::adi::DigitalOut utilArm('C'); //corner/mogo arm
- pros::adi::DigitalOut mogo1('J'); // mogo clamp
- pros::adi::DigitalOut mogo2('K'); // mogo clamp
- pros::adi::DigitalOut colorSort('B'); // mogo clamp
- pros::adi::DigitalOut intakeLift('F'); // mogo clamp
-
-
+ pros::adi::DigitalOut utilArm('A'); //doinker
+ pros::adi::DigitalOut mogo1('B'); // mogo clamp 1
+ pros::adi::DigitalOut mogo2('C'); // mogo clamp 2
+ pros::adi::DigitalOut wallArm1('E'); //Wallstake 1
+ pros::adi::DigitalOut wallArm2('F'); // Wallstake 2
+ pros::adi::DigitalOut intakeLift('G'); // Wallstake 2
 
  //Variables for ControllerHUD(); -> no touchies
-    bool rumbleOnce = false;
-    bool rumbleTwice = false;
-    int rumbleCooldown = 30000; // cooldown period in milliseconds (e.g., 60 seconds)
-     int rumbleOnceTimer = 0;
-     int rumbleTwiceTimer = 0;
-     int currentTime = 0;
     double avgTempLeft = 0;
     double avgTempRight = 0;
     int avgTempTotal = 0;
     std::string tempReturn = " ";
-    std::string warnTag = " ";
 
 //Booleans for Driver Control Toggles
    bool mogoToggle = false;
-   bool hangToggle = false;
+   bool wallToggle = false;
    bool utilToggle = false;
-   bool intakeToggle = false;
-//sensors 
- //pros::Rotation armTrack(10);
-pros::Optical vision (2);
+   bool intakePistonToggle = false;
 //PID Variables
     float error = 0.0;
     float prevError = 0.0;
@@ -74,7 +67,6 @@ pros::Optical vision (2);
 
 
 //Auton Controller HUD => Displays/Cycles Selected Auton
-//this is controlled risky stuff => i exposed the selector class to get access to the current route
 void controllerAutonHUD(){
     while (true) {
                 // When the right button is pressed it cycles "right" through the autons on the controller
@@ -95,11 +87,9 @@ void controllerAutonHUD(){
 }
 }
 
-
 //Driver Control Controller HUD => Displays DT Temp
 void controllerHUD(){
         while (true) {
-            currentTime = pros::millis();
             //This block averages the temp of the left side of the drive
             avgTempLeft = (left_motor_group.get_temperature(0) + 
               left_motor_group.get_temperature(1) + 
@@ -116,36 +106,7 @@ void controllerHUD(){
             //Casts avgTempTotal to a String
             //Because the controller set_text function only accepts strings
             tempReturn =to_string(avgTempTotal);
-            
 
-           /*
-            // Safe/Too hot display
-            // rumble feature  also :) (Commented out cuz useless)
-            if(avgTempTotal < 99){
-                warnTag = "Cool";
-                // rumbleOnce = false;
-                // rumbleTwice = false;
-            }else if (avgTempTotal > 100) {
-                warnTag = " Normal";
-                // rumbleOnce = false;
-                // rumbleTwice = false;
-            } else if(avgTempTotal > 120){
-                warnTag = "Caution";
-                    // if (!rumbleOnce && (currentTime - rumbleOnceTimer > rumbleCooldown)) {
-                    //     controller.rumble(".");
-                    //     rumbleOnce = true;
-                    //     rumbleOnceTimer = currentTime;
-                    //     rumbleTwice = false;
-                    // }
-            } if(avgTempTotal > 130){
-                warnTag = "Danger"; 
-                //   if (!rumbleTwice && (currentTime - rumbleTwiceTimer > rumbleCooldown)) {
-                //         controller.rumble("_");
-                //         rumbleTwice = true;
-                //         rumbleTwiceTimer = currentTime;
-                //         rumbleOnce = false;
-                //  }
-            } */
       //Text Display
         if(avgTempTotal < 200){
         controller.set_text(0, 0, "DT: " + tempReturn + "F ");
@@ -153,8 +114,6 @@ void controllerHUD(){
         
          controller.set_text(0, 0, "Motor(s) Unplugged");
         }
-
-
         //Because this is run as a task, you need a delay to protect the Brain's CPU
         //Normally this is like 10-25 ms, but the controller screen updates every 110 ms
         //So having the delay be smaller (more frequent updates) will brick ur controller
@@ -169,47 +128,48 @@ void controllerHUD(){
     float range = 10000; //Limit for integral anti-windup
 //arm pid loop for macros and whatnot
 
-// void armPID(float target){
-//     //deadband
-//     while(deadband >fabs(error) ){
-//      error = target - armTrack.get_angle();
-//         //kills the loop if the driver tries to move it manually
-//         //essentially an override
-//         if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1) 
-//          || controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-//             break;
-//         }
-//         //Calculates the differences between the target and current
-//         error = target - armTrack.get_angle();
-//         //calculations
-//         P = error*kP;
-//         integral += error;
-//         I = integral*kI;    
-//         deriv = error-prevError;
-//         D = deriv*kD;
-//         F = target*kF;
-//         prevError = error;
-//     //Integral Anti-WindUp
-//         if(fabs(integral) > range){
-//             integral = 0;
-//             integral += error;
-//         }
-//         //Actual Movement
-//          basket.move(P+I+D+F);
-//     }
+/*
+void armPID(float target){
+    //deadband
+    while(deadband >fabs(error) ){
+     error = target - armTrack.get_angle();
+        //kills the loop if the driver tries to move it manually
+        //essentially an override
+        if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1) 
+         || controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+            break;
+        }
+        //Calculates the differences between the target and current
+        error = target - armTrack.get_angle();
+        //calculations
+        P = error*kP;
+        integral += error;
+        I = integral*kI;    
+        deriv = error-prevError;
+        D = deriv*kD;
+        F = target*kF;
+        prevError = error;
+    //Integral Anti-WindUp
+        if(fabs(integral) > range){
+            integral = 0;
+            integral += error;
+        }
+        //Actual Movement
+         basket.move(P+I+D+F);
+    }
 
-//}
+} */
 
 //Driver Control Functions Go Here -> Call them in the opControl(); while loop
 void intakeControl(){
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-            intakeHook.move_voltage(12000);
+            intakeHood.move_voltage(12000);
             intakeFront.move_voltage(12000);
         }else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-            intakeHook.move_voltage(-12000);
+            intakeHood.move_voltage(-12000);
             intakeFront.move_voltage(12000);
         }else{
-            intakeHook.move_voltage(0);
+            intakeHood.move_voltage(0);
             intakeFront.move_voltage(0);
         }
     }
@@ -217,28 +177,28 @@ void intakeControl(){
 //Driver Control Pneumatics Code
 void pneumaticsControl(){
        // utility arm 
-            if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)){
+            if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
                 utilToggle = ! utilToggle;
                 utilArm.set_value(utilToggle);
             }
         //mogo clamp
-            if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)){
+            if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
                 mogoToggle = ! mogoToggle;
                 mogo1.set_value(mogoToggle);
                 mogo2.set_value(mogoToggle);
             }
-    // //hang
-    //         if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)){
-    //             hangToggle = ! hangToggle;
-    //             hang1.set_value(hangToggle);
-    //            // hang2.set_value(hangToggle);
-    //         }
-    //intake lift 
-            if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
-                intakeToggle = ! intakeToggle;
-                intakeLift.set_value(intakeToggle);
-               // hang2.set_value(hangToggle);
+        //intake piston
+            if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)){
+                intakePistonToggle = ! intakePistonToggle;
+                intakeLift.set_value(intakePistonToggle);
             }
+        //wallstake pistons
+            if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
+                wallToggle = ! wallToggle;
+                wallArm1.set_value(wallToggle);
+                wallArm2.set_value(wallToggle);
+            }
+
     }
 
 

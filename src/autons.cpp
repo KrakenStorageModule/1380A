@@ -94,19 +94,33 @@ lemlib::Chassis chassis(drivetrain, // drivetrain settings
 //I use these because it makes sure the piston state and toggle state stay in sync
 //this is just easier than flipping the toggle bool and THEN changing the piston state 
 
-
-
-
 //auton control functions
-void autoMogo(){
+void autonMogo(){
     mogoToggle = ! mogoToggle;
     mogo1.set_value(mogoToggle);
     mogo2.set_value(mogoToggle);
 }
-//This tracks what color auton is running
-//1 is red, 2 is blue
-int allianceColor = 0;
-
+void autonWall(){
+    wallToggle = ! wallToggle;
+    wallArm1.set_value(wallToggle);
+    wallArm2.set_value(wallToggle);
+}
+void autonLift(){
+    intakePistonToggle = ! intakePistonToggle;
+    intakeLift.set_value(intakePistonToggle);
+}
+//(too lazy to move this lol)
+bool intakeState = false;
+void autonIntake(){
+    intakeState = !intakeState;
+    if(intakeState == true){
+        intakeFront.move_voltage(12000);
+        intakeHood.move_voltage(12000);
+    }else if(intakeState == false){
+        intakeFront.move_voltage(-12000);
+        intakeHood.move_voltage(-12000);      
+    }
+}
 
 //This uses Robodash to display where the robot thinks it currently is
 void trackOdom(){
@@ -145,20 +159,11 @@ void turningPIDTune(){
     chassis.turnToHeading(90, 100000);
 }
 
-void mogoTest(){
-    //Shifts to a blank screen where position is being displayed
-    console.focus();
-    pros::Task odomTask(trackOdom);
-    chassis.moveToPoint(0, 24, 1000, {.earlyExitRange = 3}, false);
-    chassis.turnToHeading(180, 1000, {.earlyExitRange = 10}, false);
-    autoMogo();
-}
-
 void red(){
-    allianceColor = 1;
+
 }
 void blue(){
-    allianceColor = 2;
+
 }
 void odomTest(){
    console.focus();
