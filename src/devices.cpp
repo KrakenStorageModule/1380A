@@ -49,6 +49,7 @@ Motor intakeFront(22, pros::v5::MotorGears::blue);
     int avgTempTotal = 0;
     std::string tempReturn = " ";
 
+    std::string autonName = "";
 //Booleans for Driver Control Toggles
    bool mogoToggle = false;
    bool wallToggle = false;
