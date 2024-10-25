@@ -1,10 +1,15 @@
 //Declare everything here before you define it in autons.cpp =
 #ifndef AUTONS_H
 #define AUTONS_H
+
 #include "main.h"
+
 #include "pros/motors.hpp"
+
 #include "pros/imu.hpp"
+
 #include "lemlib/api.hpp"
+
 #include "robodash/api.h"
 
 //auton device funtions
@@ -21,6 +26,8 @@ void trackOdom();
 extern float xValue;
 extern float yValue;
 extern float thetaValue;
+
+extern bool autonRan;
 
 //drivetrain motorgroups
 extern pros::MotorGroup left_motor_group;
