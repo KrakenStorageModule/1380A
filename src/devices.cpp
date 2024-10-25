@@ -81,11 +81,9 @@ float integral = 0.0;
 float deriv = 0.0;
 float deadband = 1;
 
-// Global variable to hold unplugged ports string
-std::string portsString; // No need for global, consider moving it inside if needed per call
-
 void controllerHUD() {
-  portsString.clear(); // Clear the previous ports string
+  //local cuz it resets per loop
+  std::string portsString = ""; //essentially collects all of the bad port numbers
   bool allMotorsConnected = true; // Flag to check motor connection status
 
   // Check intake motors
@@ -148,7 +146,7 @@ void controllerHUD() {
     // Gets the name (as a string) of the current auton and prints it to the controller
     autonName = selector.selected_routine -> name;
     controller.set_text(0, 0, autonName);
-  } else {
+  } else { //Runs the temp display now
     // This block averages the temp of the left side of the drive
     avgTempLeft = (left_motor_group.get_temperature(0) +
       left_motor_group.get_temperature(1) +
@@ -159,16 +157,13 @@ void controllerHUD() {
       right_motor_group.get_temperature(1) +
       right_motor_group.get_temperature(2)) / 3;
 
-    // Generates the avg of the drivetrain in Fahrenheit
+    //Prints avg of both sides
     avgTempTotal = int((((avgTempLeft + avgTempRight) * 1.8) / 2) + 32);
-
-    // Casts avgTempTotal to a String
     tempReturn = std::to_string(avgTempTotal);
-
-    // Text Display
     controller.set_text(0, 0, "DT: " + tempReturn + "F ");
   }
 }
+
 // //Driver Control Controller HUD => Displays DT Temp
 // void controllerHUD() {
 

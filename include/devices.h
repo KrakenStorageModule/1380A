@@ -32,7 +32,6 @@ extern std::string tempReturn;
 extern std::string autonName;
 extern int newIndex;
 extern std::vector<int> ports;
-extern std::string portsString;
 //Toggles
 extern bool mogoToggle;
 extern bool wallToggle;
