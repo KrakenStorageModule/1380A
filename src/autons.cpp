@@ -158,22 +158,14 @@ void turningPIDTune(){
     // turn to face heading 90 with a very long timeout
     chassis.turnToHeading(90, 100000);
 }
+void soloAWP(){
 
-void red(){
-
-}
-void blue(){
-
-}
-void odomTest(){
-   console.focus();
-   pros::Task odomTask(trackOdom);
 }
 //Auton Selector -> You store your autons here as a vector so the auton selector can access them
 //It follows this format ; 
 //rd::Selector name ({"auton name", auton name}, {"auton name", auton name}});
-rd::Selector selector({{"lateralPIDTune", &lateralPIDTune},
-{"turningPIDTune", &turningPIDTune}, 
-{"red", red}, 
-{"blue", blue}
+rd::Selector selector({
+    {"lateralPIDTune", &lateralPIDTune},
+    {"turningPIDTune", &turningPIDTune},
+    {"soloAWP", &soloAWP}
 });
