@@ -27,14 +27,14 @@ ASSET(curves_txt); //for Fun auton
 
 //DT MotorGroups Go Here
 pros::MotorGroup left_motor_group({
-  -1,
-  -3,
-  -4
+  -5,
+  -4,
+  -3
 }, pros::MotorGears::blue);
 pros::MotorGroup right_motor_group({
-  5,
   6,
-  7
+  7,
+  8
 }, pros::MotorGears::blue);
 
 // Drivetrain Settings -> Input info about DT to get more accurate 
@@ -48,7 +48,7 @@ lemlib::Drivetrain drivetrain( & left_motor_group, // left motor group
 );
 
 // imu
-pros::Imu imu(13);
+pros::Imu imu(15);
 //Defining Odom Pods
 //MAY NEED TO REVERSE TRACKERS USING (port, true);
 // horizontal tracking wheel encoder

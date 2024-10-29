@@ -45,8 +45,8 @@ using pros::Motor;
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 //Initialize Motors/MotorGroups Here
-Motor intakeHood(10, pros::v5::MotorGears::blue);
-Motor intakeFront(11, pros::v5::MotorGears::blue);
+Motor intakeHood(20, pros::v5::MotorGears::blue);
+Motor intakeFront(12, pros::v5::MotorGears::blue);
 
 
 //Initialize Pneumatics Here
