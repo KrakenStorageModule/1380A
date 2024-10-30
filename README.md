@@ -11,5 +11,5 @@ autons.cpp -> Contains LemLib settings, alongside Robodash callbacks and autons/
 
 devices.cpp -> contains pistons, motors, driver control functions, PID and colorsort functions (deprecated), and controller HUD functions for displaying DT temperature and auton selecting
 
-static -> contains Jerry.io auton pathing for motion planning
+static -> contains Jerry.io auton pathing for pure pursuit
 Good Luck! 
